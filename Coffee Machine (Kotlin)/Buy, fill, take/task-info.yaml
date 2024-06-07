@@ -1,0 +1,12 @@
+type: edu
+custom_name: "Buy, fill, take!"
+files:
+  - name: src/machine/Main.kt
+    visible: true
+    learner_created: false
+  - name: test/CoffeeMachineTest.java
+    visible: false
+    learner_created: false
+feedback_link: https://hyperskill.org/projects/67/stages/363/implement#comment
+status: Unchecked
+record: -1
