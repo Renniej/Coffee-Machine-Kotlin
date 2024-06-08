@@ -91,7 +91,19 @@ class CoffeeMachine {
 
     }
     
+    fun getLimitingIngredient(recipe: MenuItem) :  MutableList<Ingredient>  {
+        val limitingIngredients  : MutableList<Ingredient> = mutableListOf();
 
+        recipe.ingredients.forEach { recIng ->
+            val foundIngredient = getIngredient(recIng.name)
+
+            if (foundIngredient == null || foundIngredient.amount < recIng.amount) {
+                limitingIngredients += recIng
+            }
+        }
+
+        return  limitingIngredients;
+    }
 
     fun makeCup(recipe : MenuItem) : Boolean{
         
@@ -131,20 +143,28 @@ class CoffeeMachine {
 fun buy(coffeeMachine: CoffeeMachine, shop: Shop) {
     println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino: ")
 
-    val choice = when(readln().toInt()) {
-        1 -> "espresso"
-        2 -> "latte"
-        3-> "cappuccino"
+    val choice = when(readln()) {
+        "1" -> "espresso"
+        "2" -> "latte"
+        "3"-> "cappuccino"
+        "back" -> return;
         else -> throw IllegalArgumentException("Invalid menu item choice")
     }
-
     val menuItem = Menu.find { it.name == choice }
     if (menuItem == null)  throw Exception("menu item $choice does not exist in Menu variable")
 
 
     with(coffeeMachine) {
+
         if (makeCup(menuItem)) {
+            println("I have enough resources, making you a coffee!")
             shop.cashAmount += menuItem.cost
+
+        }
+        else {
+            getLimitingIngredient(menuItem).forEach{ ingredient ->
+                println("Sorry, not enough ${ingredient.name}!")
+            }
         }
     }
 
@@ -181,23 +201,29 @@ fun main() {
     val ingredient = mapOf("water" to "ml", "milk" to "ml", "coffee beans" to "g")
     val coffeeMachine = CoffeeMachine()
     val shop =  Shop(550.0)
-
+    var exit = false;
 
     coffeeMachine.addIngredient(Ingredient("water", 400,"ml"),)
     coffeeMachine.addIngredient(Ingredient("milk", 540,"ml"),)
     coffeeMachine.addIngredient(Ingredient("coffee beans", 120,"g"),)
 
 
-    displayResources(shop, coffeeMachine)
-    println("Write action (buy, fill, take):")
+    while(!exit) {
 
-    when(readln()) {
-        "buy" -> buy(coffeeMachine,shop)
-        "fill" -> fill(coffeeMachine)
-        "take" -> println("I gave you $${shop.takeCash().toInt()}\n")
+        println("Write action (buy, fill, take, remaining, exit):")
+
+        when(readln()) {
+            "buy" -> buy(coffeeMachine,shop)
+            "fill" -> fill(coffeeMachine)
+            "take" -> println("I gave you $${shop.takeCash().toInt()}\n")
+            "remaining" ->displayResources(shop, coffeeMachine)
+            "exit" -> exit = true
+        }
     }
 
-    displayResources(shop, coffeeMachine)
+
+
+
 
 
 }
