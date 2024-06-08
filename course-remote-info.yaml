@@ -22,7 +22,7 @@ stages:
     is_completed: true
   - id: 365
     step: 5664
-    is_completed: false
+    is_completed: true
 topics:
   0:
     - title: Introduction to Kotlin
